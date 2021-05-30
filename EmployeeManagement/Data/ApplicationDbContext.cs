@@ -17,5 +17,9 @@ namespace EmployeeManagement.Data
             IOptions<OperationalStoreOptions> operationalStoreOptions) : base(options, operationalStoreOptions)
         {
         }
+
+        public DbSet<ApplicationUser> ApplicationUsers { get; set; }
+        public DbSet<EmployeeEntry> EmployeeEntries { get; set; }
+        public DbSet<Break> Breaks { get; set; }
     }
 }

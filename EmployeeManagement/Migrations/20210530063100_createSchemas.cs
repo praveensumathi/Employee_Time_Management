@@ -1,9 +1,9 @@
-﻿using Microsoft.EntityFrameworkCore.Migrations;
-using System;
+﻿using System;
+using Microsoft.EntityFrameworkCore.Migrations;
 
-namespace EmployeeManagement.Data.Migrations
+namespace EmployeeManagement.Migrations
 {
-    public partial class CreateIdentitySchema : Migration
+    public partial class createSchemas : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -186,6 +186,49 @@ namespace EmployeeManagement.Data.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "EmployeeEntries",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Date = table.Column<DateTime>(nullable: false),
+                    InTime = table.Column<DateTime>(nullable: false),
+                    OutTime = table.Column<DateTime>(nullable: true),
+                    ApplicationUserId = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_EmployeeEntries", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_EmployeeEntries_AspNetUsers_ApplicationUserId",
+                        column: x => x.ApplicationUserId,
+                        principalTable: "AspNetUsers",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Breaks",
+                columns: table => new
+                {
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    BreakStart = table.Column<DateTime>(nullable: true),
+                    BreakFinished = table.Column<DateTime>(nullable: true),
+                    EmployeeEntryId = table.Column<int>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Breaks", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Breaks_EmployeeEntries_EmployeeEntryId",
+                        column: x => x.EmployeeEntryId,
+                        principalTable: "EmployeeEntries",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -226,6 +269,11 @@ namespace EmployeeManagement.Data.Migrations
                 filter: "[NormalizedUserName] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Breaks_EmployeeEntryId",
+                table: "Breaks",
+                column: "EmployeeEntryId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_DeviceCodes_DeviceCode",
                 table: "DeviceCodes",
                 column: "DeviceCode",
@@ -235,6 +283,11 @@ namespace EmployeeManagement.Data.Migrations
                 name: "IX_DeviceCodes_Expiration",
                 table: "DeviceCodes",
                 column: "Expiration");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_EmployeeEntries_ApplicationUserId",
+                table: "EmployeeEntries",
+                column: "ApplicationUserId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_PersistedGrants_Expiration",
@@ -265,6 +318,9 @@ namespace EmployeeManagement.Data.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Breaks");
+
+            migrationBuilder.DropTable(
                 name: "DeviceCodes");
 
             migrationBuilder.DropTable(
@@ -272,6 +328,9 @@ namespace EmployeeManagement.Data.Migrations
 
             migrationBuilder.DropTable(
                 name: "AspNetRoles");
+
+            migrationBuilder.DropTable(
+                name: "EmployeeEntries");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
