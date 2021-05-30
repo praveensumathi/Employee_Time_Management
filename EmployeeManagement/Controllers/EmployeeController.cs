@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace EmployeeManagement.Controllers
@@ -31,8 +32,7 @@ namespace EmployeeManagement.Controllers
             List<EmployeeEntry> employeeEntries = new List<EmployeeEntry>();
             List<Break> breaks = new List<Break>();
 
-            var result = User;
-            ApplicationUser user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+            ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
 
             _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
 
@@ -71,7 +71,8 @@ namespace EmployeeManagement.Controllers
                 Breaks = employeeEntry.Breaks,
             };
 
-            var user = _userManager.FindByNameAsync(User.Identity.Name).Result;
+
+            var user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
 
             _applicationDbContext.Users.FirstOrDefault((x) => x.Id == user.Id).EmployeeEntries.Add(employee);
 
