@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace EmployeeManagement.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20210530063100_createSchemas")]
-    partial class createSchemas
+    [Migration("20210530143426_initial")]
+    partial class initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -354,7 +354,7 @@ namespace EmployeeManagement.Migrations
 
             modelBuilder.Entity("EmployeeManagement.Models.Break", b =>
                 {
-                    b.HasOne("EmployeeManagement.Models.EmployeeEntry", null)
+                    b.HasOne("EmployeeManagement.Models.EmployeeEntry", "EmployeeEntry")
                         .WithMany("Breaks")
                         .HasForeignKey("EmployeeEntryId");
                 });

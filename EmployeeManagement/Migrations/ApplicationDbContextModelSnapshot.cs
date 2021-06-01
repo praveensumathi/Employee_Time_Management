@@ -352,7 +352,7 @@ namespace EmployeeManagement.Migrations
 
             modelBuilder.Entity("EmployeeManagement.Models.Break", b =>
                 {
-                    b.HasOne("EmployeeManagement.Models.EmployeeEntry", null)
+                    b.HasOne("EmployeeManagement.Models.EmployeeEntry", "EmployeeEntry")
                         .WithMany("Breaks")
                         .HasForeignKey("EmployeeEntryId");
                 });

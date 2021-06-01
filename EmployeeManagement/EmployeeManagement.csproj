@@ -33,6 +33,12 @@
     <Compile Remove="Data\Migrations\00000000000000_CreateIdentitySchema.Designer.cs" />
     <Compile Remove="Migrations\20210530062715_createSchemas.cs" />
     <Compile Remove="Migrations\20210530062715_createSchemas.Designer.cs" />
+    <Compile Remove="Migrations\20210530063100_createSchemas.cs" />
+    <Compile Remove="Migrations\20210530063100_createSchemas.Designer.cs" />
+    <Compile Remove="Migrations\20210530141710_initial.cs" />
+    <Compile Remove="Migrations\20210530141710_initial.Designer.cs" />
+    <Compile Remove="Migrations\20210530142001_initial.cs" />
+    <Compile Remove="Migrations\20210530142001_initial.Designer.cs" />
   </ItemGroup>
 
   <ItemGroup>

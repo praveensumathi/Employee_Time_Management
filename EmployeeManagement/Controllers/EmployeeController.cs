@@ -30,22 +30,20 @@ namespace EmployeeManagement.Controllers
         public IEnumerable<EmployeeEntry> Get()
         {
             List<EmployeeEntry> employeeEntries = new List<EmployeeEntry>();
-            List<Break> breaks = new List<Break>();
 
-            ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            var allEntries = _applicationDbContext.EmployeeEntries.ToList();
 
-            _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
-
-            foreach (EmployeeEntry employeeEntry in user.EmployeeEntries)
+            foreach(EmployeeEntry employeeEntry in allEntries)
             {
+                List<Break> breaks = new List<Break>();
                 _applicationDbContext.Entry(employeeEntry).Collection(em => em.Breaks).Load();
-                foreach (Break b in employeeEntry.Breaks)
+
+                foreach(Break b in employeeEntry.Breaks)
                 {
                     breaks.Add(b);
                 }
 
                 employeeEntry.Breaks = breaks;
-
                 employeeEntries.Add(employeeEntry);
             }
 
@@ -53,17 +51,36 @@ namespace EmployeeManagement.Controllers
         }
 
         // GET api/<EmployeeController>/5
-        [HttpGet("{id}")]
-        public string Get(int id)
+        [HttpGet("[action]")]
+        public IEnumerable<EmployeeEntry> GetAuthUserEntryDetails()
         {
-            return "value";
+            List<EmployeeEntry> employeeEntries = new List<EmployeeEntry>();
+
+            ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+
+            _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
+
+            foreach (EmployeeEntry employeeEntry in user.EmployeeEntries)
+            {
+                List<Break> breaks = new List<Break>();
+                _applicationDbContext.Entry(employeeEntry).Collection(em => em.Breaks).Load();
+                foreach (Break b in employeeEntry.Breaks)
+                {
+                    breaks.Add(b);
+                }
+
+                employeeEntry.Breaks = breaks;
+                employeeEntries.Add(employeeEntry);
+            }
+
+            return employeeEntries;
         }
 
         // POST api/<EmployeeController>
         [HttpPost]
-        public ActionResult<IList<EmployeeEntry>> Post([FromBody] EmployeeEntry employeeEntry)
+        public ActionResult<EmployeeEntry> Post([FromBody] EmployeeEntry employeeEntry)
         {
-            EmployeeEntry employee = new EmployeeEntry()
+            EmployeeEntry newEntry = new EmployeeEntry()
             {
                 Date = DateTime.Now,
                 InTime = DateTime.Now,
@@ -74,34 +91,34 @@ namespace EmployeeManagement.Controllers
 
             var user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
 
-            _applicationDbContext.Users.FirstOrDefault((x) => x.Id == user.Id).EmployeeEntries.Add(employee);
+            _applicationDbContext.Users.FirstOrDefault((x) => x.Id == user.Id).EmployeeEntries.Add(newEntry);
 
             _applicationDbContext.SaveChanges();
 
-            return Ok(user.EmployeeEntries.ToList());
+            return Ok(newEntry);
         }
 
         [HttpPost("[action]")]
-        public ActionResult<EmployeeEntry> AddBreak(int id, [FromBody] Break times)
+        public ActionResult<Break> AddBreak(int id)
         {
             EmployeeEntry employeeEntry = _applicationDbContext.EmployeeEntries.FirstOrDefault((x) => x.Id == id);
-            Break time = new Break()
+            Break breakTime = new Break()
             {
-                BreakStart = times.BreakStart,
+                BreakStart = DateTime.Now,
             };
-            employeeEntry.Breaks.Add(time);
+            employeeEntry.Breaks.Add(breakTime);
 
             _applicationDbContext.SaveChanges();
 
-            return Ok(employeeEntry);
+            return Ok(breakTime);
         }
 
         [HttpPut("[action]")]
-        public ActionResult<Break> UpdateBreak(int breakId, [FromBody] Break times)
+        public ActionResult<Break> UpdateBreak(int breakId)
         {
             var updatedTime = _applicationDbContext.Breaks.FirstOrDefault((x) => x.Id == breakId);
 
-            updatedTime.BreakFinished = times.BreakFinished;
+            updatedTime.BreakFinished = DateTime.Now;
 
             _applicationDbContext.SaveChanges();
 
