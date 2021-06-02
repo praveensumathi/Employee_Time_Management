@@ -129,9 +129,6 @@ function EmploeeEntry() {
                   <StyledTableCell component="th" scope="row">
                     OutTime
                   </StyledTableCell>
-                  {/* <TableCell>Date</TableCell>
-                  <TableCell>InTime</TableCell>
-                  <TableCell>OutTime</TableCell> */}
                 </TableRow>
               </TableHead>
               <TableBody>
