@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DateFnsUtils from "@date-io/date-fns";
+import _ from "lodash";
 import Grid from "@material-ui/core/Grid";
 import {
   MuiPickersUtilsProvider,
@@ -8,42 +9,50 @@ import {
 } from "@material-ui/pickers";
 import "date-fns";
 import { Button } from "@material-ui/core";
+import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
 import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import { makeStyles } from "@material-ui/core/styles";
-import Box from "@material-ui/core/Box";
-import Collapse from "@material-ui/core/Collapse";
-import IconButton from "@material-ui/core/IconButton";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
 import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
 import Paper from "@material-ui/core/Paper";
-import { KeyboardArrowDown } from "@material-ui/icons";
-import { KeyboardArrowUp } from "@material-ui/icons";
-import authService from "../api-authorization/AuthorizeService";
+import {
+  GetAuthUserEntryDetails,
+  IEmployeeEntryDetails,
+} from "../../APIs/EmployeeEntry.API";
+import EmployeeRow from "./EmployeeRow";
+import "../../custom.css";
+
+const StyledTableCell = withStyles((theme: Theme) =>
+  createStyles({
+    head: {
+      backgroundColor: theme.palette.common.black,
+      color: theme.palette.common.white,
+    },
+    body: {
+      fontSize: 14,
+    },
+  })
+)(TableCell);
 
 function EmploeeEntry() {
   const [todayDate, setTodayDate] = useState<Date>(new Date());
   const [inTime, setInTime] = useState<Date>(new Date());
   const [outTime, setOutTime] = useState<Date | null>(null);
+  const [employeeEntries, setEmployeeEntries] =
+    useState<IEmployeeEntryDetails[]>();
+
+  async function GetDetails() {
+    await GetAuthUserEntryDetails().then((entries) => {
+      setEmployeeEntries([...entries]);
+    });
+  }
 
   useEffect(() => {
-    getUser();
-    getToken();
+    GetDetails();
   }, []);
-
-  async function getUser() {
-    var user = await authService.getUser();
-    console.log(user);
-  }
-
-  async function getToken() {
-    var token = await authService.getAccessToken();
-    console.log(token);
-  }
 
   return (
     <div>
@@ -99,6 +108,41 @@ function EmploeeEntry() {
           </Button>
         </div>
       </MuiPickersUtilsProvider>
+      <React.Fragment>
+        {_.isEmpty(employeeEntries) ? (
+          <div>Loading..</div>
+        ) : (
+          <TableContainer
+            component={Paper}
+            style={{ marginTop: "16px", marginBottom: "16px" }}
+          >
+            <Table aria-label="collapsible table">
+              <TableHead>
+                <TableRow>
+                  <StyledTableCell component="th" scope="row" />
+                  <StyledTableCell component="th" scope="row">
+                    Date
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    InTime
+                  </StyledTableCell>
+                  <StyledTableCell component="th" scope="row">
+                    OutTime
+                  </StyledTableCell>
+                  {/* <TableCell>Date</TableCell>
+                  <TableCell>InTime</TableCell>
+                  <TableCell>OutTime</TableCell> */}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {employeeEntries?.map((entry) => (
+                  <EmployeeRow key={entry.id} entry={entry} />
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </React.Fragment>
     </div>
   );
 
