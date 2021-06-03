@@ -1,24 +1,27 @@
 import React, { useEffect, useState } from "react";
 import DateFnsUtils from "@date-io/date-fns";
 import _ from "lodash";
-import Grid from "@material-ui/core/Grid";
 import {
   MuiPickersUtilsProvider,
   KeyboardTimePicker,
   KeyboardDatePicker,
 } from "@material-ui/pickers";
 import "date-fns";
-import { Button } from "@material-ui/core";
-import { withStyles, Theme, createStyles } from "@material-ui/core/styles";
-import { MaterialUiPickersDate } from "@material-ui/pickers/typings/date";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableContainer from "@material-ui/core/TableContainer";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Paper from "@material-ui/core/Paper";
-import CircularProgress from "@material-ui/core/CircularProgress";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  CircularProgress,
+  Button,
+  withStyles,
+  Theme,
+  createStyles,
+  Grid,
+} from "@material-ui/core";
 import {
   GetAuthUserEntryDetails,
   IEmployeeEntryDetails,
@@ -26,7 +29,6 @@ import {
   AddOutTime,
   AddBreak,
   UpdateBreak,
-  IBreak,
 } from "../../APIs/EmployeeEntry.API";
 import EmployeeRow from "./EmployeeRow";
 import "../../custom.css";
@@ -44,12 +46,9 @@ const StyledTableCell = withStyles((theme: Theme) =>
 )(TableCell);
 
 function EmploeeEntry() {
-  const [todayDate, setTodayDate] = useState<Date>(new Date());
-  const [inTime, setInTime] = useState<Date>(new Date());
   const [outTime, setOutTime] = useState<Date | null>(null);
   const [employeeEntries, setEmployeeEntries] =
     useState<IEmployeeEntryDetails[]>();
-  const [breaks, setBreaks] = useState<IBreak[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   async function GetDetails() {
@@ -85,7 +84,7 @@ function EmploeeEntry() {
             margin="normal"
             id="in-time-picker"
             label="In Time"
-            value={inTime}
+            value={new Date()}
             onChange={(date, value) => {}}
             KeyboardButtonProps={{
               "aria-label": "change time",
