@@ -174,7 +174,7 @@ function EmploeeEntry() {
                   <EmployeeRow
                     key={entry.id}
                     entry={entry}
-                    onBreak={(checked) => handleBreak(checked)}
+                    onBreak={(checked) => handleBreak(checked, entry)}
                   />
                 ))}
               </TableBody>
@@ -215,7 +215,7 @@ function EmploeeEntry() {
     setIsLoading(false);
   }
 
-  async function handleBreak(checked: boolean) {
+  async function handleBreak(checked: boolean, entry: IEmployeeEntryDetails) {
     if (checked) {
       var newEntries = [...employeeEntries];
       setIsLoading(true);
@@ -226,8 +226,17 @@ function EmploeeEntry() {
 
       setEmployeeEntries(newEntries);
       setIsLoading(false);
+    } else {
+      var newEntries = [...employeeEntries];
+      setIsLoading(true);
+      await UpdateBreak().then((br) => {
+        var breaks = newEntries.find((x) => x.id === entry.id).breaks;
+        var b = breaks.find((x) => x.id === br.id);
+        b.breakFinished = br.breakFinished;
+      });
 
-      console.log(newEntries);
+      setEmployeeEntries(newEntries);
+      setIsLoading(false);
     }
   }
 }

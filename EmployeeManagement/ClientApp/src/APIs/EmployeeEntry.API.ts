@@ -33,8 +33,8 @@ export async function AddBreak(): Promise<IEmployeeEntryDetails> {
   return Post("/api/employee/AddBreak", {}, {});
 }
 
-export async function UpdateBreak(breakId: number): Promise<IBreak> {
-  return Put("/api/employee/UpdateBreak", { breakId }, { breakId });
+export async function UpdateBreak(): Promise<IBreak> {
+  return Put("/api/employee/UpdateBreak", {}, {});
 }
 
 export async function AddOutTime(): Promise<IEmployeeEntryDetails> {

@@ -137,21 +137,23 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPut("[action]")]
-        public ActionResult<Break> UpdateBreak(int breakId)
+        public ActionResult<Break> UpdateBreak()
         {
-            var updatedTime = _applicationDbContext.Breaks.FirstOrDefault((x) => x.Id == breakId);
+            ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
+
+            EmployeeEntry employeeEntry = user.EmployeeEntries.Where((entry) => entry.Date.Day == DateTime.Now.Day).FirstOrDefault();
+
+            var updatedTime = _applicationDbContext.Breaks.FirstOrDefault((x) => x.EmployeeEntry.Id== employeeEntry.Id && x.BreakFinished == null);
 
             updatedTime.BreakFinished = DateTime.Now;
 
             _applicationDbContext.SaveChanges();
 
+           
             return Ok(updatedTime);
 
         }
-        // DELETE api/<EmployeeController>/5
-        [HttpDelete("{id}")]
-        public void Delete(int id)
-        {
-        }
+       
     }
 }
