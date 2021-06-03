@@ -129,10 +129,21 @@ function EmploeeEntry() {
                   <StyledTableCell component="th" scope="row">
                     OutTime
                   </StyledTableCell>
+                  <StyledTableCell component="th" scope="row" align="center">
+                    Break
+                  </StyledTableCell>
                 </TableRow>
               </TableHead>
               <TableBody>
-                {employeeEntries?.map((entry) => (
+                {_.orderBy(
+                  employeeEntries,
+                  [
+                    function (entry) {
+                      return new Date(entry.date);
+                    },
+                  ],
+                  ["desc"]
+                )?.map((entry) => (
                   <EmployeeRow key={entry.id} entry={entry} />
                 ))}
               </TableBody>
@@ -144,10 +155,7 @@ function EmploeeEntry() {
   );
 
   function handleDateChange(date: MaterialUiPickersDate, value: any) {}
-  function handleInTimeChange(date: MaterialUiPickersDate, value: any) {
-    console.log(date);
-    console.log(value);
-  }
+  function handleInTimeChange(date: MaterialUiPickersDate, value: any) {}
   function handleOutTimeChange() {}
 }
 

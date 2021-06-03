@@ -1,16 +1,19 @@
-import React, { useState } from "react";
-import Box from "@material-ui/core/Box";
-import { makeStyles } from "@material-ui/core/styles";
-import Collapse from "@material-ui/core/Collapse";
-import IconButton from "@material-ui/core/IconButton";
-import Table from "@material-ui/core/Table";
-import TableBody from "@material-ui/core/TableBody";
-import TableCell from "@material-ui/core/TableCell";
-import TableHead from "@material-ui/core/TableHead";
-import TableRow from "@material-ui/core/TableRow";
-import Typography from "@material-ui/core/Typography";
-import KeyboardArrowDownIcon from "@material-ui/icons/KeyboardArrowDown";
-import KeyboardArrowUpIcon from "@material-ui/icons/KeyboardArrowUp";
+import React, { useEffect, useState } from "react";
+import {
+  Collapse,
+  IconButton,
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableRow,
+  Typography,
+  makeStyles,
+  Box,
+  FormControlLabel,
+  Switch,
+} from "@material-ui/core";
+import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import { IEmployeeEntryDetails } from "../../APIs/EmployeeEntry.API";
 
 interface IProps {
@@ -28,8 +31,18 @@ const useRowStyles = makeStyles({
 function EmployeeRow(props: IProps) {
   const { entry } = props;
   const [open, setOpen] = useState(false);
+  const [checked, setChecked] = useState(false);
+  const [isCurrentDate, setIsCurrentDate] = useState(false);
 
   const classes = useRowStyles();
+
+  useEffect(() => {
+    if (entry) {
+      new Date(entry.date).getDate() === new Date().getDate()
+        ? setIsCurrentDate(true)
+        : setIsCurrentDate(false);
+    }
+  }, [entry]);
 
   return (
     <React.Fragment>
@@ -40,13 +53,29 @@ function EmployeeRow(props: IProps) {
             size="small"
             onClick={() => setOpen(!open)}
           >
-            {open ? <KeyboardArrowUpIcon /> : <KeyboardArrowDownIcon />}
+            {open ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
           </IconButton>
         </TableCell>
         <TableCell>{new Date(entry.date).toDateString()}</TableCell>
         <TableCell>{new Date(entry.inTime).toLocaleTimeString()}</TableCell>
         <TableCell>
           {entry.outTime ? new Date(entry.outTime).toLocaleDateString() : "-"}
+        </TableCell>
+        <TableCell align="center">
+          {isCurrentDate ? (
+            <FormControlLabel
+              label={checked ? "In Break" : null}
+              labelPlacement="top"
+              control={
+                <Switch
+                  checked={checked}
+                  onChange={handleChange}
+                  name="Break"
+                  color="primary"
+                />
+              }
+            />
+          ) : null}
         </TableCell>
       </TableRow>
       <TableRow>
@@ -86,6 +115,10 @@ function EmployeeRow(props: IProps) {
       </TableRow>
     </React.Fragment>
   );
+
+  function handleChange() {
+    setChecked(!checked);
+  }
 }
 
 export default EmployeeRow;

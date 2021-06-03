@@ -36,5 +36,9 @@ export async function AddBreak(id: number): Promise<IBreak> {
 }
 
 export async function UpdateQuerySet(breakId: number): Promise<IBreak> {
-  return Put("/api/Query", { breakId }, { breakId });
+  return Put("/api/employee/UpdateBreak", { breakId }, { breakId });
+}
+
+export async function AddOutTime(id: number): Promise<IEmployeeEntryDetails> {
+  return Put("/api/employee/AddOutTime", { id }, { id });
 }

@@ -98,6 +98,16 @@ namespace EmployeeManagement.Controllers
             return Ok(newEntry);
         }
 
+        [HttpPut("[action]")]
+        public ActionResult<EmployeeEntry> AddOutTime(int id)
+        {
+            EmployeeEntry employeeEntry = _applicationDbContext.EmployeeEntries.FirstOrDefault((x) => x.Id == id);
+            employeeEntry.OutTime = DateTime.Now;
+            _applicationDbContext.SaveChanges();
+
+            return Ok(employeeEntry);
+        }
+
         [HttpPost("[action]")]
         public ActionResult<Break> AddBreak(int id)
         {
