@@ -85,16 +85,23 @@ namespace EmployeeManagement.Controllers
                 Date = DateTime.Now,
                 InTime = DateTime.Now,
                 OutTime = null,
-                Breaks = null,
             };
 
             var user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            var result = _applicationDbContext.EmployeeEntries.Where((entry) => entry.Date.Day == newEntry.Date.Day).FirstOrDefault();
 
-            _applicationDbContext.Users.FirstOrDefault((x) => x.Id == user.Id).EmployeeEntries.Add(newEntry);
+            if(result == null)
+            {
+                _applicationDbContext.Users.FirstOrDefault((x) => x.Id == user.Id).EmployeeEntries.Add(newEntry);
 
-            _applicationDbContext.SaveChanges();
+                _applicationDbContext.SaveChanges();
 
-            return Ok(newEntry);
+                return Ok(newEntry);
+            }
+            else
+            {
+                return Ok(result);
+            }
         }
 
         [HttpPut("[action]")]
@@ -112,7 +119,7 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPost("[action]")]
-        public ActionResult<Break> AddBreak()
+        public ActionResult<EmployeeEntry> AddBreak()
         {
             ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
             _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
@@ -126,7 +133,7 @@ namespace EmployeeManagement.Controllers
 
             _applicationDbContext.SaveChanges();
 
-            return Ok(breakTime);
+            return Ok(employeeEntry);
         }
 
         [HttpPut("[action]")]

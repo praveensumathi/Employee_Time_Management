@@ -18,6 +18,7 @@ import { IEmployeeEntryDetails } from "../../APIs/EmployeeEntry.API";
 
 interface IProps {
   entry: IEmployeeEntryDetails;
+  onBreak(checked: boolean): void;
 }
 
 const useRowStyles = makeStyles({
@@ -70,7 +71,10 @@ function EmployeeRow(props: IProps) {
               control={
                 <Switch
                   checked={checked}
-                  onChange={handleChange}
+                  onChange={(_e, checked) => {
+                    props.onBreak(checked);
+                    setChecked(checked);
+                  }}
                   name="Break"
                   color="primary"
                 />
@@ -95,7 +99,7 @@ function EmployeeRow(props: IProps) {
                 </TableHead>
                 <TableBody>
                   {entry.breaks
-                    ? entry.breaks.map((b) => (
+                    ? entry.breaks?.map((b) => (
                         <TableRow key={b.id}>
                           <TableCell
                             style={{ borderBottom: "none" }}
@@ -105,7 +109,9 @@ function EmployeeRow(props: IProps) {
                             {new Date(b.breakStart).toLocaleTimeString()}
                           </TableCell>
                           <TableCell style={{ borderBottom: "none" }}>
-                            {new Date(b.breakFinished).toLocaleTimeString()}
+                            {b.breakFinished
+                              ? new Date(b.breakFinished).toLocaleTimeString()
+                              : "-"}
                           </TableCell>
                         </TableRow>
                       ))
@@ -118,10 +124,6 @@ function EmployeeRow(props: IProps) {
       </TableRow>
     </React.Fragment>
   );
-
-  function handleChange() {
-    setChecked(!checked);
-  }
 }
 
 export default EmployeeRow;

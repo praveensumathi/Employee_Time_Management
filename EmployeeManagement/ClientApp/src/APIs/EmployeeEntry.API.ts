@@ -29,14 +29,14 @@ export async function AddNewEntry(): Promise<IEmployeeEntryDetails> {
   return Post("/api/employee", {});
 }
 
-export async function AddBreak(id: number): Promise<IBreak> {
-  return Post("/api/employee/AddBreak", { id }, { id });
+export async function AddBreak(): Promise<IEmployeeEntryDetails> {
+  return Post("/api/employee/AddBreak", {}, {});
 }
 
-export async function UpdateQuerySet(breakId: number): Promise<IBreak> {
+export async function UpdateBreak(breakId: number): Promise<IBreak> {
   return Put("/api/employee/UpdateBreak", { breakId }, { breakId });
 }
 
-export async function AddOutTime(id: number): Promise<IEmployeeEntryDetails> {
-  return Put("/api/employee/AddOutTime", { id }, { id });
+export async function AddOutTime(): Promise<IEmployeeEntryDetails> {
+  return Put("/api/employee/AddOutTime", {}, {});
 }

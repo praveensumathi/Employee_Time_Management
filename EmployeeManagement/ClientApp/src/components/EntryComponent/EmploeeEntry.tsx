@@ -23,6 +23,10 @@ import {
   GetAuthUserEntryDetails,
   IEmployeeEntryDetails,
   AddNewEntry,
+  AddOutTime,
+  AddBreak,
+  UpdateBreak,
+  IBreak,
 } from "../../APIs/EmployeeEntry.API";
 import EmployeeRow from "./EmployeeRow";
 import "../../custom.css";
@@ -45,6 +49,7 @@ function EmploeeEntry() {
   const [outTime, setOutTime] = useState<Date | null>(null);
   const [employeeEntries, setEmployeeEntries] =
     useState<IEmployeeEntryDetails[]>();
+  const [breaks, setBreaks] = useState<IBreak[]>([]);
   const [isLoading, setIsLoading] = useState(false);
 
   async function GetDetails() {
@@ -69,7 +74,7 @@ function EmploeeEntry() {
             label="Select Date"
             format="MM/dd/yyyy"
             value={new Date()}
-            onChange={(date, value) => handleDateChange}
+            onChange={(date, value) => {}}
             KeyboardButtonProps={{
               "aria-label": "change date",
             }}
@@ -81,7 +86,7 @@ function EmploeeEntry() {
             id="in-time-picker"
             label="In Time"
             value={inTime}
-            onChange={(date, value) => handleInTimeChange}
+            onChange={(date, value) => {}}
             KeyboardButtonProps={{
               "aria-label": "change time",
             }}
@@ -94,7 +99,7 @@ function EmploeeEntry() {
             id="out-time-picker"
             label="Out Time"
             value={outTime}
-            onChange={(date, value) => handleOutTimeChange}
+            onChange={(date, value) => handleOutTimeChange(date, value)}
             KeyboardButtonProps={{
               "aria-label": "change time",
             }}
@@ -114,10 +119,20 @@ function EmploeeEntry() {
             color="primary"
             onClick={() => handleSave()}
             disabled={isLoading}
+            style={{ marginRight: "10px" }}
           >
             Save
           </Button>
-          {isLoading ? <CircularProgress /> : null}
+          {isLoading ? <CircularProgress size="small" /> : null}
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleUpdate()}
+            disabled={isLoading}
+            style={{ marginRight: "10px" }}
+          >
+            Update
+          </Button>
         </div>
       </MuiPickersUtilsProvider>
       <React.Fragment>
@@ -156,7 +171,11 @@ function EmploeeEntry() {
                   ],
                   ["desc"]
                 )?.map((entry) => (
-                  <EmployeeRow key={entry.id} entry={entry} />
+                  <EmployeeRow
+                    key={entry.id}
+                    entry={entry}
+                    onBreak={(checked) => handleBreak(checked)}
+                  />
                 ))}
               </TableBody>
             </Table>
@@ -166,18 +185,50 @@ function EmploeeEntry() {
     </div>
   );
 
-  function handleDateChange() {}
-  function handleInTimeChange() {}
-  async function handleOutTimeChange() {}
+  async function handleOutTimeChange(date: Date, value: string) {
+    setOutTime(date);
+  }
 
   async function handleSave() {
     setIsLoading(true);
     await AddNewEntry().then((newEntry) => {
-      setEmployeeEntries((prevEntries) =>
-        prevEntries ? [...prevEntries, newEntry] : [newEntry]
-      );
+      var checkEntry = employeeEntries.find((x) => x.id === newEntry.id);
+      if (checkEntry == null) {
+        setEmployeeEntries((prevEntries) =>
+          prevEntries ? [...prevEntries, newEntry] : [newEntry]
+        );
+        setIsLoading(false);
+      }
       setIsLoading(false);
     });
+  }
+
+  async function handleUpdate() {
+    var newEntries = [...employeeEntries];
+    setIsLoading(true);
+    await AddOutTime().then((u) => {
+      var updatedEntry = newEntries.find((entry) => entry.id == u.id);
+      updatedEntry.outTime = u.outTime;
+    });
+
+    setEmployeeEntries(newEntries);
+    setIsLoading(false);
+  }
+
+  async function handleBreak(checked: boolean) {
+    if (checked) {
+      var newEntries = [...employeeEntries];
+      setIsLoading(true);
+      await AddBreak().then((entry) => {
+        var updatedEntry = newEntries.find((x) => x.id === entry.id);
+        updatedEntry.breaks.push(...entry.breaks);
+      });
+
+      setEmployeeEntries(newEntries);
+      setIsLoading(false);
+
+      console.log(newEntries);
+    }
   }
 }
 
