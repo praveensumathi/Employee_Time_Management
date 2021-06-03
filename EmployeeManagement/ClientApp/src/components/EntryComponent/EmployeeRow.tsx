@@ -59,11 +59,12 @@ function EmployeeRow(props: IProps) {
         <TableCell>{new Date(entry.date).toDateString()}</TableCell>
         <TableCell>{new Date(entry.inTime).toLocaleTimeString()}</TableCell>
         <TableCell>
-          {entry.outTime ? new Date(entry.outTime).toLocaleDateString() : "-"}
+          {entry.outTime ? new Date(entry.outTime).toLocaleTimeString() : "-"}
         </TableCell>
         <TableCell align="center">
           {isCurrentDate ? (
             <FormControlLabel
+              disabled={entry.outTime ? true : false}
               label={checked ? "In Break" : null}
               labelPlacement="top"
               control={
@@ -93,20 +94,22 @@ function EmployeeRow(props: IProps) {
                   </TableRow>
                 </TableHead>
                 <TableBody>
-                  {entry.breaks.map((b) => (
-                    <TableRow key={b.id}>
-                      <TableCell
-                        style={{ borderBottom: "none" }}
-                        component="th"
-                        scope="row"
-                      >
-                        {new Date(b.breakStart).toLocaleTimeString()}
-                      </TableCell>
-                      <TableCell style={{ borderBottom: "none" }}>
-                        {new Date(b.breakFinished).toLocaleTimeString()}
-                      </TableCell>
-                    </TableRow>
-                  ))}
+                  {entry.breaks
+                    ? entry.breaks.map((b) => (
+                        <TableRow key={b.id}>
+                          <TableCell
+                            style={{ borderBottom: "none" }}
+                            component="th"
+                            scope="row"
+                          >
+                            {new Date(b.breakStart).toLocaleTimeString()}
+                          </TableCell>
+                          <TableCell style={{ borderBottom: "none" }}>
+                            {new Date(b.breakFinished).toLocaleTimeString()}
+                          </TableCell>
+                        </TableRow>
+                      ))
+                    : null}
                 </TableBody>
               </Table>
             </Box>

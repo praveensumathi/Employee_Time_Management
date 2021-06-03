@@ -78,16 +78,15 @@ namespace EmployeeManagement.Controllers
 
         // POST api/<EmployeeController>
         [HttpPost]
-        public ActionResult<EmployeeEntry> Post([FromBody] EmployeeEntry employeeEntry)
+        public ActionResult<EmployeeEntry> Post()
         {
             EmployeeEntry newEntry = new EmployeeEntry()
             {
                 Date = DateTime.Now,
                 InTime = DateTime.Now,
-                OutTime = employeeEntry.OutTime,
-                Breaks = employeeEntry.Breaks,
+                OutTime = null,
+                Breaks = null,
             };
-
 
             var user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
 
@@ -99,19 +98,26 @@ namespace EmployeeManagement.Controllers
         }
 
         [HttpPut("[action]")]
-        public ActionResult<EmployeeEntry> AddOutTime(int id)
+        public ActionResult<EmployeeEntry> AddOutTime()
         {
-            EmployeeEntry employeeEntry = _applicationDbContext.EmployeeEntries.FirstOrDefault((x) => x.Id == id);
-            employeeEntry.OutTime = DateTime.Now;
+            ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
+
+            var entry = user.EmployeeEntries.Where((x) => x.Date.Day == DateTime.Now.Day).FirstOrDefault();
+
+            entry.OutTime = DateTime.Now;
             _applicationDbContext.SaveChanges();
 
-            return Ok(employeeEntry);
+            return Ok(entry);
         }
 
         [HttpPost("[action]")]
-        public ActionResult<Break> AddBreak(int id)
+        public ActionResult<Break> AddBreak()
         {
-            EmployeeEntry employeeEntry = _applicationDbContext.EmployeeEntries.FirstOrDefault((x) => x.Id == id);
+            ApplicationUser user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
+            _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
+
+            EmployeeEntry employeeEntry = user.EmployeeEntries.Where((entry) => entry.Date.Day == DateTime.Now.Day).FirstOrDefault();
             Break breakTime = new Break()
             {
                 BreakStart = DateTime.Now,

@@ -18,9 +18,11 @@ import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import Paper from "@material-ui/core/Paper";
+import CircularProgress from "@material-ui/core/CircularProgress";
 import {
   GetAuthUserEntryDetails,
   IEmployeeEntryDetails,
+  AddNewEntry,
 } from "../../APIs/EmployeeEntry.API";
 import EmployeeRow from "./EmployeeRow";
 import "../../custom.css";
@@ -43,13 +45,13 @@ function EmploeeEntry() {
   const [outTime, setOutTime] = useState<Date | null>(null);
   const [employeeEntries, setEmployeeEntries] =
     useState<IEmployeeEntryDetails[]>();
+  const [isLoading, setIsLoading] = useState(false);
 
   async function GetDetails() {
     await GetAuthUserEntryDetails().then((entries) => {
       setEmployeeEntries([...entries]);
     });
   }
-
   useEffect(() => {
     GetDetails();
   }, []);
@@ -66,25 +68,28 @@ function EmploeeEntry() {
             id="date-picker-dialog"
             label="Select Date"
             format="MM/dd/yyyy"
-            value={todayDate}
-            onChange={(date, value) => handleDateChange(date, value)}
+            value={new Date()}
+            onChange={(date, value) => handleDateChange}
             KeyboardButtonProps={{
               "aria-label": "change date",
             }}
             showTodayButton={true}
+            readOnly={true}
           />
           <KeyboardTimePicker
             margin="normal"
             id="in-time-picker"
             label="In Time"
             value={inTime}
-            onChange={(date, value) => handleInTimeChange(date, value)}
+            onChange={(date, value) => handleInTimeChange}
             KeyboardButtonProps={{
               "aria-label": "change time",
             }}
             showTodayButton={true}
+            readOnly={true}
           />
           <KeyboardTimePicker
+            autoOk={true}
             margin="normal"
             id="out-time-picker"
             label="Out Time"
@@ -93,6 +98,7 @@ function EmploeeEntry() {
             KeyboardButtonProps={{
               "aria-label": "change time",
             }}
+            showTodayButton={true}
           />
         </Grid>
         <div
@@ -103,9 +109,15 @@ function EmploeeEntry() {
             marginTop: "20px",
           }}
         >
-          <Button variant="contained" color="primary">
+          <Button
+            variant="contained"
+            color="primary"
+            onClick={() => handleSave()}
+            disabled={isLoading}
+          >
             Save
           </Button>
+          {isLoading ? <CircularProgress /> : null}
         </div>
       </MuiPickersUtilsProvider>
       <React.Fragment>
@@ -154,9 +166,19 @@ function EmploeeEntry() {
     </div>
   );
 
-  function handleDateChange(date: MaterialUiPickersDate, value: any) {}
-  function handleInTimeChange(date: MaterialUiPickersDate, value: any) {}
-  function handleOutTimeChange() {}
+  function handleDateChange() {}
+  function handleInTimeChange() {}
+  async function handleOutTimeChange() {}
+
+  async function handleSave() {
+    setIsLoading(true);
+    await AddNewEntry().then((newEntry) => {
+      setEmployeeEntries((prevEntries) =>
+        prevEntries ? [...prevEntries, newEntry] : [newEntry]
+      );
+      setIsLoading(false);
+    });
+  }
 }
 
 export default EmploeeEntry;

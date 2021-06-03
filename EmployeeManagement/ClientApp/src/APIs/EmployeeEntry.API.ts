@@ -25,10 +25,8 @@ export async function GetAuthUserEntryDetails(): Promise<
   return Get("/api/employee/GetAuthUserEntryDetails");
 }
 
-export async function AddNewEntry(
-  emploeeEntry: IEmployeeEntryDetails
-): Promise<IEmployeeEntryDetails> {
-  return Post("/api/employee", emploeeEntry);
+export async function AddNewEntry(): Promise<IEmployeeEntryDetails> {
+  return Post("/api/employee", {});
 }
 
 export async function AddBreak(id: number): Promise<IBreak> {
