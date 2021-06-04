@@ -122,7 +122,7 @@ function EmploeeEntry() {
           >
             Save
           </Button>
-          {isLoading ? <CircularProgress size="small" /> : null}
+          {isLoading ? <CircularProgress size="medium" /> : null}
           <Button
             variant="contained"
             color="primary"
@@ -216,25 +216,25 @@ function EmploeeEntry() {
 
   async function handleBreak(checked: boolean, entry: IEmployeeEntryDetails) {
     if (checked) {
-      var newEntries = [...employeeEntries];
+      var newEntriesValues = [...employeeEntries];
       setIsLoading(true);
-      await AddBreak().then((entry) => {
-        var updatedEntry = newEntries.find((x) => x.id === entry.id);
-        updatedEntry.breaks.push(...entry.breaks);
+      await AddBreak().then((en) => {
+        var updatedEntry = newEntriesValues.find((x) => x.id === en.id);
+        updatedEntry.breaks.push(...en.breaks);
       });
 
-      setEmployeeEntries(newEntries);
+      setEmployeeEntries(newEntriesValues);
       setIsLoading(false);
     } else {
-      var newEntries = [...employeeEntries];
+      var newEntriesValues = [...employeeEntries];
       setIsLoading(true);
       await UpdateBreak().then((br) => {
-        var breaks = newEntries.find((x) => x.id === entry.id).breaks;
+        var breaks = newEntriesValues.find((x) => x.id === entry.id).breaks;
         var b = breaks.find((x) => x.id === br.id);
         b.breakFinished = br.breakFinished;
       });
 
-      setEmployeeEntries(newEntries);
+      setEmployeeEntries(newEntriesValues);
       setIsLoading(false);
     }
   }

@@ -15,6 +15,7 @@ import {
 } from "@material-ui/core";
 import { KeyboardArrowDown, KeyboardArrowUp } from "@material-ui/icons";
 import { IEmployeeEntryDetails } from "../../APIs/EmployeeEntry.API";
+import _ from "lodash";
 
 interface IProps {
   entry: IEmployeeEntryDetails;
@@ -60,7 +61,9 @@ function EmployeeRow(props: IProps) {
         <TableCell>{new Date(entry.date).toDateString()}</TableCell>
         <TableCell>{new Date(entry.inTime).toLocaleTimeString()}</TableCell>
         <TableCell>
-          {entry.outTime ? new Date(entry.outTime).toLocaleTimeString() : "-"}
+          {entry.outTime != null
+            ? new Date(entry.outTime).toLocaleTimeString()
+            : "-"}
         </TableCell>
         <TableCell align="center">
           {isCurrentDate ? (
@@ -70,7 +73,14 @@ function EmployeeRow(props: IProps) {
               labelPlacement="top"
               control={
                 <Switch
-                  checked={checked}
+                  checked={
+                    checked
+                      ? checked
+                      : !_.isEmpty(entry.breaks)
+                      ? entry.breaks[entry?.breaks.length - 1].breakFinished ===
+                        null
+                      : false
+                  }
                   onChange={(_e, checked) => {
                     props.onBreak(checked);
                     setChecked(checked);

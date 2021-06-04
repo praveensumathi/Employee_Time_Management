@@ -88,7 +88,9 @@ namespace EmployeeManagement.Controllers
             };
 
             var user = _userManager.FindByIdAsync(User.FindFirst(ClaimTypes.NameIdentifier).Value).Result;
-            var result = _applicationDbContext.EmployeeEntries.Where((entry) => entry.Date.Day == newEntry.Date.Day).FirstOrDefault();
+            _applicationDbContext.Entry(user).Collection(x => x.EmployeeEntries).Load();
+
+            var result = user.EmployeeEntries.Where((entry) => entry.Date.Day == newEntry.Date.Day).FirstOrDefault();
 
             if(result == null)
             {
@@ -150,9 +152,7 @@ namespace EmployeeManagement.Controllers
 
             _applicationDbContext.SaveChanges();
 
-           
             return Ok(updatedTime);
-
         }
        
     }
